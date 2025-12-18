@@ -1,26 +1,24 @@
 import express from "express";
-import router from "./routes/authRoutes.js";
 import cors from "cors";
-
+import router from "./routes/authRoutes.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 
 const app = express();
 
-// Middlewares
 app.use(express.json());
 
-const corsOptions = {
-  origin: ["http://localhost:5173", "https://password-resetguvi.netlify.app"],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-};
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://password-resetguvi.netlify.app"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
-app.use(cors(corsOptions));
-
-// Routes
-
+// ROUTES
 app.use("/api/auth", router);
+
+// ERROR HANDLER (LAST)
 app.use(errorHandler);
 
 export default app;
