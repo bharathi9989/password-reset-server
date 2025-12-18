@@ -11,7 +11,8 @@ app.use(express.json());
 import cors from "cors";
 
 app.use(
-  cors({
+    cors({
+      
     origin: ["http://localhost:5173", "https://password-resetguvi.netlify.app"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
