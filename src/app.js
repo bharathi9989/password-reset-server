@@ -18,6 +18,7 @@ app.use(
   })
 );
 
+
 // Routes
 
 app.use("/api/auth", router);
