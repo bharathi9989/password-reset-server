@@ -1,4 +1,4 @@
-// Error handler
+// Error handldling
 
 
 export const errorHandler = (err, req, res, next) => {
