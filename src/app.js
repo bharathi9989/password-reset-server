@@ -7,32 +7,22 @@ const app = express();
 
 app.use(express.json());
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // allow server-to-server, Postman, curl
-      if (!origin) return callback(null, true);
+const corsOptions = {
+  origin: [
+    "http://localhost:5173",
+    "https://password-resetflows-client.netlify.app",
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
 
-      const allowedOrigins = [
-        "http://localhost:5173",
-        "https://password-resetguvi.netlify.app",
-      ];
+// ✅ THIS IS ENOUGH (no app.options needed)
+app.use(cors(corsOptions));
 
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("CORS not allowed"));
-      }
-    },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
-
-// ROUTES
+// Routes
 app.use("/api/auth", router);
 
-// ERROR HANDLER (ALWAYS LAST)
+// Error handler
 app.use(errorHandler);
 
 export default app;
