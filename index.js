@@ -1,14 +1,16 @@
-
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 dotenv.config();
 
-import app from "./src/app.js"
-import { connectDB } from "./src/config/db.js"
-import { ENV } from "./src/config/env.js"
-
+import app from "./src/app.js";
+import { connectDB } from "./src/config/db.js";
+import { ENV } from "./src/config/env.js";
 
 // connected to db
-connectDB()
+connectDB();
+
+app.get("/", (req, res) => {
+  res.send("API is Running...");
+});
 app.listen(ENV.PORT, () => {
-  console.log(`Application Running on ${ENV.PORT}`)
-})
+  console.log(`Application Running on ${ENV.PORT}`);
+});
