@@ -10,6 +10,8 @@ import { asyncHandler } from "../core/asyncHandler.js";
 const router = express.Router();
 // Routes 
 
+router.post("/register", registerUser);
+router.post("/login", loginUser);
 router.post("/forgot-password", asyncHandler(forgotPassword));
 router.post("/reset-password/:token", asyncHandler(resetPassword));
 router.get("/reset-password/:token", asyncHandler(verifyResetToken));
