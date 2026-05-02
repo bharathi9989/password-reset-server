@@ -7,8 +7,6 @@ import crypto from "crypto";
 import { ENV } from "../config/env.js";
 
 
-import bcrypt from "bcryptjs";
-import User from "../models/User.js";
 
 export const registerUser = async (req, res) => {
   const { email, password } = req.body;
