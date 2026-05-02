@@ -1,6 +1,8 @@
 import express from "express";
 import {
   forgotPassword,
+  loginUser,
+  registerUser,
   resetPassword,
   verifyResetToken,
 } from "../controllers/authController.js";
