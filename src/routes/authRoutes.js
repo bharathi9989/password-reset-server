@@ -1,4 +1,5 @@
 import express from "express";
+
 import {
   forgotPassword,
   loginUser,
@@ -6,17 +7,19 @@ import {
   resetPassword,
   verifyResetToken,
 } from "../controllers/authController.js";
-import { asyncHandler } from "../core/asyncHandler.js";
-
 
 const router = express.Router();
-// Routes 
 
+// AUTH ROUTES
 router.post("/register", registerUser);
-router.post("/login", loginUser);
-router.post("/forgot-password", asyncHandler(forgotPassword));
-router.post("/reset-password/:token", asyncHandler(resetPassword));
-router.get("/reset-password/:token", asyncHandler(verifyResetToken));
 
+router.post("/login", loginUser);
+
+// PASSWORD RESET ROUTES
+router.post("/forgot-password", forgotPassword);
+
+router.post("/reset-password/:token", resetPassword);
+
+router.get("/reset-password/:token", verifyResetToken);
 
 export default router;

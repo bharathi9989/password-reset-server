@@ -57,6 +57,8 @@ export const loginUser = async (req, res, next) => {
 
 /* ================= FORGOT PASSWORD ================= */
 export const forgotPassword = async (req, res, next) => {
+
+  console.log("🔥 forgotPassword route hit");
   try {
     const { email } = req.body;
 
@@ -74,6 +76,7 @@ export const forgotPassword = async (req, res, next) => {
       });
     }
 
+    // Generate token
     const rawToken = generateResetToken();
 
     const hashedToken = crypto
@@ -81,22 +84,30 @@ export const forgotPassword = async (req, res, next) => {
       .update(rawToken)
       .digest("hex");
 
+    // Save token
     user.resetPasswordToken = hashedToken;
     user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
 
     await user.save();
 
+    // Reset link
     const link = `${ENV.CLIENT_URL}/reset-password/${rawToken}`;
 
-    // SEND MAIL WITHOUT BLOCKING RESPONSE
-    sendResetEmail(email, link).catch((err) => {
-      console.log(err);
-    });
+    console.log("📩 Sending mail to:", email);
+    console.log("🔗 Link:", link);
+
+    // IMPORTANT
+    await sendResetEmail(email, link);
+
+    console.log("✅ Mail sent successfully");
 
     return res.status(200).json({
       message: "Password reset link sent to email",
     });
   } catch (error) {
+    console.log("❌ FORGOT PASSWORD ERROR");
+    console.log(error);
+
     next(error);
   }
 };
