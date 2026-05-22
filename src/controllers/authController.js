@@ -56,54 +56,48 @@ export const loginUser = async (req, res, next) => {
 };
 
 /* ================= FORGOT PASSWORD ================= */
-export const forgotPassword = async (req, res) => {
-  console.log("STEP 1 - API HIT");
-
+export const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
-    console.log("STEP 2 - BODY", email);
+
+    if (!email) {
+      return res.status(400).json({
+        message: "Email is required",
+      });
+    }
 
     const user = await User.findOne({ email });
-    console.log("STEP 3 - USER", user?.email);
 
     if (!user) {
-      console.log("STEP 4 - NO USER");
-      return res.json({ message: "No user" });
+      return res.json({
+        message: "Reset link sent if email exists",
+      });
     }
 
     const rawToken = generateResetToken();
-    console.log("STEP 5 - TOKEN GENERATED");
 
     const hashedToken = crypto
       .createHash("sha256")
       .update(rawToken)
       .digest("hex");
 
-    console.log("STEP 6 - TOKEN HASHED");
-
     user.resetPasswordToken = hashedToken;
     user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
 
-    console.log("STEP 7 - BEFORE SAVE");
-
     await user.save();
 
-    console.log("STEP 8 - AFTER SAVE");
+    const link = `${ENV.CLIENT_URL}/reset-password/${rawToken}`;
 
-    const link = `http://localhost:5173/reset-password/${rawToken}`;
-    console.log("STEP 9 - LINK", link);
+    // SEND MAIL WITHOUT BLOCKING RESPONSE
+    sendResetEmail(email, link).catch((err) => {
+      console.log(err);
+    });
 
-    // ❌ COMMENT MAIL TEMPORARILY
-    // sendResetEmail(email, link)
-
-    console.log("STEP 10 - BEFORE RESPONSE");
-
-    res.json({ message: "DONE SUCCESS" });
-
-    console.log("STEP 11 - AFTER RESPONSE");
-  } catch (err) {
-    console.error("💥 ERROR:", err);
-    res.status(500).json({ message: "Server error" });
+    return res.status(200).json({
+      message: "Password reset link sent to email",
+    });
+  } catch (error) {
+    next(error);
   }
 };
 
