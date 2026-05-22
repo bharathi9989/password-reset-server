@@ -8,4 +8,11 @@ export const ENV = {
   EMAIL_USER: process.env.EMAIL_USER,
   EMAIL_PASS: process.env.EMAIL_PASS,
   MAILTRAP_TOKEN: process.env.MAILTRAP_TOKEN,
+  MAIL_HOST: process.env.MAIL_HOST,
+
+  MAIL_PORT: process.env.MAIL_PORT,
+
+  MAIL_USER: process.env.MAIL_USER,
+
+  MAIL_PASS: process.env.MAIL_PASS,
 };
