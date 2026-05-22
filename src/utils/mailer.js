@@ -3,26 +3,30 @@ import { ENV } from "../config/env.js";
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
+  port: 587,
+  secure: false,
 
   auth: {
     user: ENV.EMAIL_USER,
     pass: ENV.EMAIL_PASS,
   },
 
-  connectionTimeout: 10000,
+  tls: {
+    rejectUnauthorized: false,
+  },
+
+  connectionTimeout: 30000,
+  greetingTimeout: 30000,
+  socketTimeout: 30000,
 });
 
 export const sendResetEmail = async (toEmail, link) => {
   try {
-    console.log("📧 BEFORE VERIFY");
+    console.log("📧 VERIFY START");
 
     await transporter.verify();
 
     console.log("✅ SMTP VERIFIED");
-
-    console.log("📧 BEFORE SEND");
 
     const info = await transporter.sendMail({
       from: ENV.EMAIL_USER,
@@ -39,7 +43,7 @@ export const sendResetEmail = async (toEmail, link) => {
 
     return info;
   } catch (error) {
-    console.log("❌ MAIL ERROR ❌");
+    console.log("❌ MAIL ERROR");
     console.error(error);
 
     throw error;
