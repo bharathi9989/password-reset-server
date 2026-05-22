@@ -7,6 +7,7 @@ const transporter = nodemailer.createTransport({
     user: ENV.EMAIL_USER,
     pass: ENV.EMAIL_PASS,
   },
+  connectionTimeout: 10000,
 });
 
 export const sendResetEmail = async (toEmail, link) => {
