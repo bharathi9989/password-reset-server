@@ -1,39 +1,28 @@
 import nodemailer from "nodemailer";
-import { MailtrapTransport } from "mailtrap";
 import { ENV } from "../config/env.js";
 
-const transporter = nodemailer.createTransport(
-  MailtrapTransport({
-    token: ENV.MAILTRAP_TOKEN,
-  }),
-);
+const transporter = nodemailer.createTransport({
+  host: ENV.MAIL_HOST,
+  port: Number(ENV.MAIL_PORT),
+
+  auth: {
+    user: ENV.MAIL_USER,
+    pass: ENV.MAIL_PASS,
+  },
+});
 
 export const sendResetEmail = async (toEmail, link) => {
   try {
-    console.log("📧 MAILTRAP START");
+    console.log("📧 MAILTRAP SMTP START");
 
     const info = await transporter.sendMail({
-      from: {
-        address: ENV.EMAIL_USER,
-        name: "Password Reset App",
-      },
-
-      to: [toEmail],
-
+      from: "test@mailtrap.io",
+      to: toEmail,
       subject: "Reset Password",
-
       html: `
         <h2>Password Reset</h2>
-
-        <p>Click below to reset password:</p>
-
-        <a href="${link}">
-          Reset Password
-        </a>
-
-        <br /><br />
-
-        <p>${link}</p>
+        <p>Click below to reset password</p>
+        <a href="${link}">${link}</a>
       `,
     });
 
@@ -42,7 +31,7 @@ export const sendResetEmail = async (toEmail, link) => {
     return info;
   } catch (error) {
     console.log("❌ MAIL ERROR");
-    console.error(error);
+    console.log(error);
 
     throw error;
   }
