@@ -57,26 +57,23 @@ export const loginUser = async (req, res, next) => {
 
 /* ================= FORGOT PASSWORD ================= */
 export const forgotPassword = async (req, res, next) => {
-
-  console.log("🔥 forgotPassword route hit");
   try {
+    console.log("🔥 ROUTE HIT");
+
     const { email } = req.body;
 
-    if (!email) {
-      return res.status(400).json({
-        message: "Email is required",
-      });
-    }
+    console.log("🔥 EMAIL:", email);
 
     const user = await User.findOne({ email });
 
+    console.log("🔥 USER:", user);
+
     if (!user) {
-      return res.json({
-        message: "Reset link sent if email exists",
+      return res.status(404).json({
+        message: "User not found",
       });
     }
 
-    // Generate token
     const rawToken = generateResetToken();
 
     const hashedToken = crypto
@@ -84,31 +81,32 @@ export const forgotPassword = async (req, res, next) => {
       .update(rawToken)
       .digest("hex");
 
-    // Save token
     user.resetPasswordToken = hashedToken;
     user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
 
     await user.save();
 
-    // Reset link
+    console.log("🔥 USER SAVED");
+
     const link = `${ENV.CLIENT_URL}/reset-password/${rawToken}`;
 
-    console.log("📩 Sending mail to:", email);
-    console.log("🔗 Link:", link);
+    console.log("🔥 BEFORE MAIL");
 
-    // IMPORTANT
-    await sendResetEmail(email, link);
+    const info = await sendResetEmail(email, link);
 
-    console.log("✅ Mail sent successfully");
+    console.log("🔥 AFTER MAIL");
+    console.log(info);
 
     return res.status(200).json({
       message: "Password reset link sent to email",
     });
   } catch (error) {
-    console.log("❌ FORGOT PASSWORD ERROR");
+    console.log("❌ ERROR:");
     console.log(error);
 
-    next(error);
+    return res.status(500).json({
+      message: error.message,
+    });
   }
 };
 

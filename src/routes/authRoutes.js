@@ -10,12 +10,12 @@ import {
 
 const router = express.Router();
 
-// AUTH ROUTES
+console.log("🔥 AUTH ROUTES FILE LOADED");
+
 router.post("/register", registerUser);
 
 router.post("/login", loginUser);
 
-// PASSWORD RESET ROUTES
 router.post("/forgot-password", forgotPassword);
 
 router.post("/reset-password/:token", resetPassword);

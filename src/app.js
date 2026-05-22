@@ -5,24 +5,23 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 
 const app = express();
 
+app.use(cors());
+
 app.use(express.json());
 
-const corsOptions = {
-  origin: [
-    "http://localhost:5173",
-    "https://password-resetflows-client.netlify.app",
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
+console.log("🔥 APP STARTED");
 
-// ✅ THIS IS ENOUGH (no app.options needed)
-app.use(cors(corsOptions));
+/* TEST ROUTE */
+app.get("/", (req, res) => {
+  res.send("API WORKING");
+});
 
-// Routes
+/* ROUTES */
 app.use("/api/auth", router);
 
-// Error handler
+console.log("🔥 ROUTES LOADED");
+
+/* ERROR HANDLER */
 app.use(errorHandler);
 
 export default app;
