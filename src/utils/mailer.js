@@ -14,7 +14,7 @@ export const sendResetEmail = async (toEmail, link) => {
 
     const info = await transporter.sendMail({
       from: {
-        address: "hello@demomailtrap.co",
+        address: ENV.EMAIL_USER,
         name: "Password Reset App",
       },
 
