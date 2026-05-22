@@ -11,6 +11,12 @@ const transporter = nodemailer.createTransport({
 
 export const sendResetEmail = async (toEmail, link) => {
   try {
+    console.log("STEP 1");
+
+    await transporter.verify();
+
+    console.log("STEP 2 SMTP READY");
+
     const info = await transporter.sendMail({
       from: ENV.EMAIL_USER,
       to: toEmail,
@@ -21,11 +27,13 @@ export const sendResetEmail = async (toEmail, link) => {
       `,
     });
 
-    console.log("MAIL SENT:", info.response);
+    console.log("STEP 3 MAIL SENT");
 
     return info;
   } catch (error) {
-    console.log("MAIL ERROR:", error);
+    console.log("FULL MAIL ERROR");
+    console.log(error);
+
     throw error;
   }
 };
