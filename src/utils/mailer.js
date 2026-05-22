@@ -1,41 +1,39 @@
 import nodemailer from "nodemailer";
+import { MailtrapTransport } from "mailtrap";
 import { ENV } from "../config/env.js";
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-
-  auth: {
-    user: ENV.EMAIL_USER,
-    pass: ENV.EMAIL_PASS,
-  },
-
-  tls: {
-    rejectUnauthorized: false,
-  },
-
-  connectionTimeout: 30000,
-  greetingTimeout: 30000,
-  socketTimeout: 30000,
-});
+const transporter = nodemailer.createTransport(
+  MailtrapTransport({
+    token: ENV.MAILTRAP_TOKEN,
+  }),
+);
 
 export const sendResetEmail = async (toEmail, link) => {
   try {
-    console.log("📧 VERIFY START");
-
-    await transporter.verify();
-
-    console.log("✅ SMTP VERIFIED");
+    console.log("📧 MAILTRAP START");
 
     const info = await transporter.sendMail({
-      from: ENV.EMAIL_USER,
-      to: toEmail,
+      from: {
+        address: "hello@demomailtrap.co",
+        name: "Password Reset App",
+      },
+
+      to: [toEmail],
+
       subject: "Reset Password",
+
       html: `
         <h2>Password Reset</h2>
+
         <p>Click below to reset password:</p>
-        <a href="${link}">${link}</a>
+
+        <a href="${link}">
+          Reset Password
+        </a>
+
+        <br /><br />
+
+        <p>${link}</p>
       `,
     });
 
