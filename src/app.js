@@ -5,8 +5,15 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 
 const app = express();
 
-app.use(cors());
+/* CORS */
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "password-resetflows-client.netlify.app"],
+    credentials: true,
+  }),
+);
 
+/* BODY PARSER */
 app.use(express.json());
 
 console.log("🔥 APP STARTED");
