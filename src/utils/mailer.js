@@ -2,30 +2,24 @@ import nodemailer from "nodemailer";
 import { ENV } from "../config/env.js";
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
+  service: "gmail",
 
   auth: {
     user: ENV.EMAIL_USER,
     pass: ENV.EMAIL_PASS,
   },
-
-  connectionTimeout: 10000,
 });
 
 export const sendResetEmail = async (toEmail, link) => {
   try {
     console.log("📧 MAIL START");
 
-    console.log("BEFORE VERIFY");
-
+    // VERIFY SMTP
     await transporter.verify();
 
-    console.log("SMTP VERIFIED");
+    console.log("✅ SMTP VERIFIED");
 
-    console.log("BEFORE SEND");
-
+    // SEND MAIL
     const info = await transporter.sendMail({
       from: `"Password Reset App" <${ENV.EMAIL_USER}>`,
 
@@ -34,30 +28,47 @@ export const sendResetEmail = async (toEmail, link) => {
       subject: "Password Reset Link",
 
       html: `
-        <h2>Password Reset</h2>
+        <div style="font-family: Arial; padding: 20px;">
+          <h2>Password Reset</h2>
 
-        <p>Click below link to reset password</p>
+          <p>Click the button below to reset your password.</p>
 
-        <a href="${link}">
-          Reset Password
-        </a>
+          <a 
+            href="${link}"
+            style="
+              display:inline-block;
+              padding:12px 20px;
+              background:#2563eb;
+              color:white;
+              text-decoration:none;
+              border-radius:6px;
+              margin-top:10px;
+            "
+          >
+            Reset Password
+          </a>
 
-        <br /><br />
+          <p style="margin-top:20px;">
+            Or copy this link:
+          </p>
 
-        <p>${link}</p>
+          <p>${link}</p>
+
+          <p>
+            This link expires in 15 minutes.
+          </p>
+        </div>
       `,
     });
 
-    console.log("AFTER SEND");
-
     console.log("✅ MAIL SENT");
+    console.log(info.response);
 
     return info;
   } catch (error) {
     console.log("❌ MAIL ERROR");
-
     console.log(error);
 
-    throw error;
+    throw new Error("Email sending failed");
   }
 };
